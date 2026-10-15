@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>쨈하니 사랑해</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #ffd1e8, #ffe9f3, #e3d4ff, #ffd1e8);
+    background-size: 300% 300%;
+    animation: bg 10s ease infinite;
+    font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    overflow: hidden;
+  }
+  h1 {
+    z-index: 1; margin: 0; padding: 0 16px; text-align: center;
+    font-size: clamp(2rem, 9vw, 5rem); font-weight: 800; color: #ff4f93;
+    text-shadow: 0 0 12px #fff, 0 0 28px #ff9cc7, 0 0 48px #ffc2dd;
+    animation: pop 2.4s ease-in-out infinite;
+  }
+  .heart {
+    position: fixed; bottom: -40px; user-select: none; pointer-events: none;
+    animation: float linear forwards;
+  }
+  @keyframes bg { 0%,100% { background-position: 0 50%; } 50% { background-position: 100% 50%; } }
+  @keyframes pop { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+  @keyframes float {
+    to { transform: translateY(-115vh) rotate(30deg); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body, h1 { animation: none; }
+  }
+</style>
+</head>
+<body>
+<h1>쨈하니 사랑해 💕</h1>
+<script>
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const emojis = ["💖", "💕", "💗", "✨", "🍓", "🌸"];
+    setInterval(() => {
+      const el = document.createElement("span");
+      el.className = "heart";
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + "vw";
+      el.style.fontSize = 16 + Math.random() * 28 + "px";
+      el.style.animationDuration = 5 + Math.random() * 5 + "s";
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 10000);
+    }, 300);
+  }
+</script>
+</body>
+</html>
