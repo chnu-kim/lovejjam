@@ -35,7 +35,7 @@
 
   .heart-btn {
     appearance: none; border: 0; background: none; padding: 18px; cursor: pointer; border-radius: 50%;
-    animation: rise 1s cubic-bezier(.2,.8,.2,1) both;
+    animation: rise 1s cubic-bezier(.2,.8,.2,1) backwards;
   }
   .heart-btn svg {
     width: min(46vw, 190px); height: auto; display: block; overflow: visible;
@@ -48,16 +48,16 @@
   h1 {
     margin: 0; font-weight: 400; text-align: center; letter-spacing: .02em;
     font-size: clamp(2rem, 9.5vw, 3.2rem); color: var(--ink); line-height: 1.25;
-    animation: rise 1s .25s cubic-bezier(.2,.8,.2,1) both;
+    animation: rise 1s .25s cubic-bezier(.2,.8,.2,1) backwards;
   }
   .hint {
     margin: 0; font-size: .95rem; color: var(--mute); transition: opacity .6s;
-    animation: rise 1s .5s cubic-bezier(.2,.8,.2,1) both;
+    animation: rise 1s .5s cubic-bezier(.2,.8,.2,1) backwards;
   }
   .hint.gone { opacity: 0; }
 
   .mini { position: fixed; width: 22px; height: 22px; pointer-events: none; z-index: 5; left: 0; top: 0;
-    animation: fly 1.4s cubic-bezier(.2,.7,.3,1) forwards; }
+    animation: fly 1.4s cubic-bezier(.2,.7,.3,1) both; }
   .mini svg { width: 100%; height: 100%; display: block; }
   .dust { position: fixed; border-radius: 50%; pointer-events: none; background: var(--soft); opacity: 0;
     animation: drift linear infinite; }
@@ -86,6 +86,8 @@
       <path id="hp" d="M50 88C20 68 6 50 6 32 6 18 17 8 30 8c8 0 15 4 20 11C55 12 62 8 70 8c13 0 24 10 24 24 0 18-14 36-44 56z"/>
     </defs>
   </svg>
+
+  <label id="haptic" aria-hidden="true" style="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden"><input type="checkbox" switch tabindex="-1"></label>
 
   <main>
     <button class="heart-btn" id="heart" aria-label="쨈하니 사랑해">
@@ -121,9 +123,14 @@
 
   heart.addEventListener("pointerdown", (e) => {
     heart.classList.remove("tap"); void heart.offsetWidth; heart.classList.add("tap");
-    if (navigator.vibrate) navigator.vibrate(12);
     if (++taps === 1) hint.classList.add("gone");
     if (calm) spawn(e.clientX, e.clientY);
+  });
+  // 진동은 click(사용자 활성화가 인정되는 시점)에서. iOS는 vibrate 미지원이라 switch 체크박스 햅틱으로 대체
+  const haptic = document.getElementById("haptic");
+  heart.addEventListener("click", () => {
+    if (navigator.vibrate) navigator.vibrate(15);
+    else if (haptic) haptic.click();
   });
   // 하트 밖을 눌러도 작은 하트가 올라옴
   document.body.addEventListener("pointerdown", (e) => {
