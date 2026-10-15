@@ -4,52 +4,184 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>쨈하니 사랑해</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
+  :root { --pink: #ff6fa8; --deep: #ff4f93; --cream: #fff6fa; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; margin: 0; }
   body {
-    display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, #ffd1e8, #ffe9f3, #e3d4ff, #ffd1e8);
-    background-size: 300% 300%;
-    animation: bg 10s ease infinite;
-    font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-    overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+    background:
+      radial-gradient(circle at 20% 15%, #fff 0 6%, transparent 7%),
+      radial-gradient(circle at 80% 80%, #fff 0 5%, transparent 6%),
+      linear-gradient(160deg, #ffd9ec, #ffeaf4 40%, #e9ddff 75%, #ffd9ec);
+    background-size: auto, auto, 250% 250%;
+    animation: bg 12s ease infinite;
+    font-family: "Jua", "Apple SD Gothic Neo", sans-serif;
+    color: var(--deep); overflow: hidden; cursor: pointer; user-select: none;
   }
+
+  /* 얼굴 */
+  .face {
+    position: relative; width: 190px; height: 170px; z-index: 2;
+    background: #fff; border-radius: 52% 52% 48% 48% / 55% 55% 45% 45%;
+    box-shadow: 0 0 0 6px #ffc2dd, 0 14px 30px #ff9cc766, inset 0 -10px 18px #ffe3f0;
+    animation: bounce 1.8s ease-in-out infinite;
+    transition: transform .2s;
+  }
+  .face::before, .face::after { /* 귀 */
+    content: ""; position: absolute; top: -26px; width: 52px; height: 62px; z-index: -1;
+    background: #fff; border-radius: 50% 50% 40% 40%; box-shadow: 0 0 0 6px #ffc2dd;
+  }
+  .face::before { left: 14px; transform: rotate(-14deg); }
+  .face::after { right: 14px; transform: rotate(14deg); }
+  .eye {
+    position: absolute; top: 52px; width: 38px; height: 46px; background: #3b2a3f; border-radius: 50%;
+    overflow: hidden; transition: height .15s;
+  }
+  .eye.l { left: 36px; } .eye.r { right: 36px; }
+  .pupil { position: absolute; left: 50%; top: 50%; width: 100%; height: 100%; transform: translate(-50%, -50%); }
+  .pupil::before { content: ""; position: absolute; left: 7px; top: 6px; width: 15px; height: 15px; background: #fff; border-radius: 50%; }
+  .pupil::after { content: ""; position: absolute; right: 7px; bottom: 8px; width: 7px; height: 7px; background: #fff; border-radius: 50%; }
+  .cheek { position: absolute; top: 104px; width: 34px; height: 20px; background: #ff9cc7; border-radius: 50%; opacity: .6; filter: blur(2px); }
+  .cheek.l { left: 14px; } .cheek.r { right: 14px; }
+  .mouth {
+    position: absolute; left: 50%; top: 108px; width: 20px; height: 10px; transform: translateX(-50%);
+    border-bottom: 4px solid #3b2a3f; border-radius: 0 0 20px 20px; transition: all .2s;
+  }
+  .blink .eye { height: 5px; margin-top: 20px; }
+
+  /* 행복 상태 (클릭) */
+  .happy .eye { background: none; overflow: visible; }
+  .happy .eye .pupil { display: none; }
+  .happy .eye::before { content: "♥"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 44px; color: var(--deep); animation: beat .4s ease infinite; }
+  .happy .mouth { width: 30px; height: 20px; background: #ff7aa8; border: 4px solid #3b2a3f; border-radius: 0 0 30px 30px; }
+  .happy.face { animation: jump .5s ease infinite; }
+
+  /* 서운 상태 (방치) */
+  .sulk .mouth { border-bottom: none; border-top: 4px solid #3b2a3f; border-radius: 20px 20px 0 0; top: 114px; }
+  .sulk.face { animation: none; transform: translateY(6px) scale(.97); }
+  .sulk .eye { height: 40px; }
+  .tear { display: none; position: absolute; top: 94px; width: 9px; height: 14px; background: #8fd3ff; border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%; }
+  .tear.l { left: 44px; } .tear.r { right: 44px; }
+  .sulk .tear { display: block; animation: drip 1.4s ease-in infinite; }
+
+  /* 글자 */
   h1 {
-    z-index: 1; margin: 0; padding: 0 16px; text-align: center;
-    font-size: clamp(2rem, 9vw, 5rem); font-weight: 800; color: #ff4f93;
-    text-shadow: 0 0 12px #fff, 0 0 28px #ff9cc7, 0 0 48px #ffc2dd;
-    animation: pop 2.4s ease-in-out infinite;
+    z-index: 2; margin: 6px 0 0; padding: 0 12px; text-align: center; line-height: 1.2;
+    font-weight: 400; font-size: clamp(2.2rem, 11vw, 4.6rem); color: var(--deep);
+    -webkit-text-stroke: 0; text-shadow: 0 3px 0 #fff, 0 0 18px #ffb6d6, 0 0 36px #ffd0e6;
   }
-  .heart {
-    position: fixed; bottom: -40px; user-select: none; pointer-events: none;
-    animation: float linear forwards;
+  h1 span { display: inline-block; animation: wave 1.6s ease-in-out infinite; animation-delay: calc(var(--i) * .1s); }
+  h1 .sp { width: .35em; }
+  .sub {
+    z-index: 2; min-height: 2.2em; padding: 8px 20px; margin: 0; border-radius: 999px; text-align: center;
+    background: #ffffffb3; box-shadow: 0 4px 14px #ff9cc744; font-size: clamp(1rem, 4.4vw, 1.3rem); color: var(--pink);
+    transition: opacity .3s; max-width: 90vw;
   }
-  @keyframes bg { 0%,100% { background-position: 0 50%; } 50% { background-position: 100% 50%; } }
-  @keyframes pop { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-  @keyframes float {
-    to { transform: translateY(-115vh) rotate(30deg); opacity: 0; }
-  }
+  .hint { z-index: 2; margin: 0; font-size: .85rem; color: #ff9cc7; animation: blinkhint 2s ease infinite; }
+
+  /* 떠오르는 것들 */
+  .float { position: fixed; bottom: -50px; pointer-events: none; animation: float linear forwards; z-index: 1; }
+  .burst { position: fixed; pointer-events: none; z-index: 3; font-size: 22px; animation: burst .9s ease-out forwards; }
+
+  @keyframes bg { 0%,100% { background-position: 0 0, 0 0, 0 50%; } 50% { background-position: 0 0, 0 0, 100% 50%; } }
+  @keyframes bounce { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-14px) rotate(2deg); } }
+  @keyframes jump { 0%,100% { transform: translateY(0) scale(1.04); } 50% { transform: translateY(-26px) scale(1.08); } }
+  @keyframes beat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+  @keyframes wave { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  @keyframes float { to { transform: translateY(-115vh) rotate(40deg); opacity: 0; } }
+  @keyframes burst { to { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; } }
+  @keyframes drip { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(34px); opacity: 0; } }
+  @keyframes blinkhint { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) {
-    body, h1 { animation: none; }
+    *, *::before, *::after { animation: none !important; }
   }
 </style>
 </head>
 <body>
-<h1>쨈하니 사랑해 💕</h1>
+  <div class="face" id="face" aria-hidden="true">
+    <div class="eye l"><div class="pupil"></div></div>
+    <div class="eye r"><div class="pupil"></div></div>
+    <div class="cheek l"></div><div class="cheek r"></div>
+    <div class="tear l"></div><div class="tear r"></div>
+    <div class="mouth"></div>
+  </div>
+  <h1 id="title" aria-label="쨈하니 사랑해"></h1>
+  <p class="sub" id="sub">나 여기 있어요, 쨈하니 💗</p>
+  <p class="hint">눌러주세요 · 쓰다듬어 주세요 🥺</p>
+
 <script>
-  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const emojis = ["💖", "💕", "💗", "✨", "🍓", "🌸"];
-    setInterval(() => {
-      const el = document.createElement("span");
-      el.className = "heart";
-      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      el.style.left = Math.random() * 100 + "vw";
-      el.style.fontSize = 16 + Math.random() * 28 + "px";
-      el.style.animationDuration = 5 + Math.random() * 5 + "s";
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 10000);
-    }, 300);
+  const $ = (id) => document.getElementById(id);
+  const face = $("face"), sub = $("sub"), pupils = [...document.querySelectorAll(".pupil")];
+  const calm = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // 글자 하나씩 통통
+  let i = 0;
+  $("title").innerHTML = [..."쨈하니 사랑해"].map((c) =>
+    c === " " ? '<span class="sp"> </span>' : `<span style="--i:${i++}">${c}</span>`).join("") + '<span style="--i:' + i + '"> 💕</span>';
+
+  const idle = ["나 여기 있어요, 쨈하니 💗", "쨈하니만 보고 있어요 👀", "세상에서 제일 좋아해요 🍓",
+    "하루종일 쨈하니 생각만 했어요 🌸", "나만 봐주면 안 돼요…? 🥺", "쨈하니가 웃으면 나도 행복해 ✨",
+    "쨈하니 없으면 안 돼요 🧸", "와줘서 너무너무 고마워요 💖"];
+  const happy = ["꺄아앗 좋아좋아!! 💖", "더 해줘요 더더더~ 🥹", "쨈하니 최고 최고 최고 ✨", "심장이 두근두근해요 💓",
+    "사랑해요 사랑해요 사랑해요 💕", "헤헤… 행복해 🌷"];
+  const sulk = ["…나 안 봐요? 🥺", "쨈하니… 어디 갔어요…", "나 여기 있는데… 💧", "관심 주세요… 조금만… 🧸"];
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  const say = (t) => { sub.style.opacity = 0; setTimeout(() => { sub.textContent = t; sub.style.opacity = 1; }, 180); };
+
+  // 눈이 커서를 따라감
+  function look(x, y) {
+    pupils.forEach((p) => {
+      const r = p.parentElement.getBoundingClientRect();
+      const a = Math.atan2(y - (r.top + r.height / 2), x - (r.left + r.width / 2));
+      p.style.transform = `translate(calc(-50% + ${Math.cos(a) * 6}px), calc(-50% + ${Math.sin(a) * 6}px))`;
+    });
   }
+  // 방치되면 서운해함
+  let idleT, sulkT;
+  function attention() {
+    face.classList.remove("sulk");
+    clearTimeout(idleT);
+    idleT = setTimeout(() => { face.classList.add("sulk"); say(pick(sulk)); }, 7000);
+  }
+  addEventListener("pointermove", (e) => { look(e.clientX, e.clientY); if (face.classList.contains("sulk")) { say("어! 와줬다! 🥹"); } attention(); });
+
+  // 클릭하면 하트 폭죽 + 행복
+  addEventListener("pointerdown", (e) => {
+    attention();
+    face.classList.add("happy");
+    clearTimeout(sulkT); sulkT = setTimeout(() => face.classList.remove("happy"), 1400);
+    say(pick(happy));
+    if (!calm) return;
+    for (let k = 0; k < 9; k++) {
+      const el = document.createElement("span");
+      el.className = "burst";
+      el.textContent = pick(["💖", "💕", "💗", "✨", "🍓", "🌸"]);
+      el.style.left = e.clientX + "px"; el.style.top = e.clientY + "px";
+      const ang = (Math.PI * 2 * k) / 9, d = 60 + Math.random() * 60;
+      el.style.setProperty("--dx", Math.cos(ang) * d + "px");
+      el.style.setProperty("--dy", Math.sin(ang) * d - 30 + "px");
+      document.body.appendChild(el); setTimeout(() => el.remove(), 900);
+    }
+  });
+
+  // 눈 깜빡
+  setInterval(() => { face.classList.add("blink"); setTimeout(() => face.classList.remove("blink"), 140); }, 3200);
+  // 말풍선 순환
+  setInterval(() => { if (!face.classList.contains("sulk") && !face.classList.contains("happy")) say(pick(idle)); }, 4500);
+  // 배경에 둥실둥실
+  if (calm) setInterval(() => {
+    const el = document.createElement("span");
+    el.className = "float";
+    el.textContent = pick(["💖", "💕", "💗", "✨", "🍓", "🌸", "🎀", "🫧"]);
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.fontSize = 16 + Math.random() * 28 + "px";
+    el.style.animationDuration = 6 + Math.random() * 6 + "s";
+    document.body.appendChild(el); setTimeout(() => el.remove(), 12000);
+  }, 380);
+  attention();
 </script>
 </body>
 </html>
