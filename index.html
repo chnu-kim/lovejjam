@@ -128,9 +128,18 @@
   });
   // 진동은 click(사용자 활성화가 인정되는 시점)에서. iOS는 vibrate 미지원이라 switch 체크박스 햅틱으로 대체
   const haptic = document.getElementById("haptic");
+  let dbg;
+  if (location.hash === "#debug") {
+    dbg = document.createElement("pre");
+    dbg.style.cssText = "position:fixed;left:8px;bottom:8px;margin:0;font:12px monospace;color:var(--ink);z-index:9";
+    dbg.textContent = "vibrate: " + typeof navigator.vibrate + " / secure: " + isSecureContext + " / UA: " + navigator.userAgent;
+    document.body.appendChild(dbg);
+  }
   heart.addEventListener("click", () => {
-    if (navigator.vibrate) navigator.vibrate(15);
-    else if (haptic) haptic.click();
+    let r = "none";
+    if (navigator.vibrate) r = navigator.vibrate([25]);
+    else if (haptic) { haptic.click(); r = "ios-switch"; }
+    if (dbg) dbg.textContent += "\nresult: " + r;
   });
   // 하트 밖을 눌러도 작은 하트가 올라옴
   document.body.addEventListener("pointerdown", (e) => {
